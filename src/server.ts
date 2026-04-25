@@ -1,11 +1,12 @@
 import app from './app';
-import { connectDB } from './config/db';
+import { connectDB, keepAlive } from './config/db';
 import { env } from './config/env';
 
 const startServer = async () => {
   try {
     // Connect to MongoDB Atlas
     await connectDB();
+    keepAlive();
 
     // Start Express server
     const PORT = parseInt(env.PORT, 10);

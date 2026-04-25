@@ -8,6 +8,8 @@ import {
   updateAvailabilitySchema,
   listUsersSchema,
   getUserByIdSchema,
+  submitStudentEmailSchema,
+  verifyStudentEmailOtpSchema,
 } from './user.validation';
 
 const router = Router();
@@ -98,6 +100,9 @@ router.delete('/me/portfolio', authMiddleware, userController.deletePortfolioIma
  *     summary: Complete onboarding
  */
 router.post('/me/onboard', authMiddleware, userController.completeOnboarding);
+
+router.post('/me/student-email', authMiddleware, validate(submitStudentEmailSchema), userController.submitStudentEmail);
+router.post('/me/student-email/verify', authMiddleware, validate(verifyStudentEmailOtpSchema), userController.verifyStudentEmail);
 
 /**
  * @openapi

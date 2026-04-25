@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, uuid, varchar, integer } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean, uuid, varchar, jsonb } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // ─── Users Table ───
@@ -21,6 +21,8 @@ export const users = pgTable('users', {
   // Portfolio
   portfolioLinks: text('portfolio_links').array().default([]),
   portfolioImages: text('portfolio_images').array().default([]),
+  portfolioBlocks: jsonb('portfolio_blocks').$type<any[]>().default([]),
+  expertise: jsonb('expertise').$type<any[]>().default([]),
   profileImage: text('profile_image').default(''),
   
   // Contact
@@ -34,6 +36,12 @@ export const users = pgTable('users', {
   otpCode: text('otp_code'),
   otpExpiresAt: timestamp('otp_expires_at'),
   refreshToken: text('refresh_token'),
+
+  // Student email verification
+  studentEmail: varchar('student_email', { length: 255 }),
+  isStudentVerified: boolean('is_student_verified').default(false),
+  studentOtpCode: text('student_otp_code'),
+  studentOtpExpiresAt: timestamp('student_otp_expires_at'),
   
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

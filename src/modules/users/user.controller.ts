@@ -103,6 +103,24 @@ export const deleteAccount = asyncHandler(async (req: AuthRequest, res: Response
 });
 
 /**
+ * POST /api/users/me/student-email
+ * Submit student email for verification
+ */
+export const submitStudentEmail = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const result = await userService.submitStudentEmail(req.user!.userId, req.body.studentEmail);
+  res.status(200).json(new ApiResponse(200, result, 'Verification code sent'));
+});
+
+/**
+ * POST /api/users/me/student-email/verify
+ * Verify student email OTP
+ */
+export const verifyStudentEmail = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const result = await userService.verifyStudentEmail(req.user!.userId, req.body.otp);
+  res.status(200).json(new ApiResponse(200, result, 'Student email verified'));
+});
+
+/**
  * POST /api/users/:id/connect
  * Express interest in a talent (Swipe Right)
  */

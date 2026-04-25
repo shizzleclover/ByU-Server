@@ -1,31 +1,39 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/neon-http';
+import { neon } from '@neondatabase/serverless';
 import { env } from './env';
 import * as schema from '../db/schema';
 
-/**
- * Standard PostgreSQL Pool.
- * Uses TCP (port 5432) which is often more reliable for local development.
- */
-const pool = new Pool({
-  connectionString: env.DATABASE_URL,
-});
+const sql = neon(env.DATABASE_URL);
 
-/**
- * Drizzle ORM instance with node-postgres driver.
- */
-export const db = drizzle(pool, { schema });
+export const db = drizzle(sql, { schema });
 
-/**
- * Connection check.
- */
 export const connectDB = async (): Promise<void> => {
-  try {
-    const client = await pool.connect();
-    console.log('✅ Connected to Neon PostgreSQL (via TCP)');
-    client.release();
-  } catch (error) {
-    console.error('❌ Failed to connect to database:', error);
-    process.exit(1);
+  const MAX_RETRIES = 6;
+  let delay = 4000;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      await sql`SELECT 1`;
+      console.log('✅ Connected to Neon PostgreSQL (via HTTP)');
+      return;
+    } catch (error) {
+      if (attempt === MAX_RETRIES) {
+        console.error('❌ Failed to connect to database after all retries:', error);
+        process.exit(1);
+      }
+      console.warn(`⚠️  DB cold-start (attempt ${attempt}/${MAX_RETRIES}), retrying in ${delay / 1000}s...`);
+      await new Promise(r => setTimeout(r, delay));
+      delay = Math.min(delay * 1.5, 20000);
+    }
   }
+};
+
+// Ping every 4 minutes to prevent Neon free-tier suspension (suspends after 5 min idle)
+export const keepAlive = (): void => {
+  setInterval(async () => {
+    try {
+      await sql`SELECT 1`;
+    } catch {
+      // silent — just a keep-alive, not critical
+    }
+  }, 4 * 60 * 1000);
 };
