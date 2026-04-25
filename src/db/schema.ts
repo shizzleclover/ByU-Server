@@ -14,7 +14,7 @@ export const users = pgTable('users', {
   
   // Availability (Flattened)
   availabilityStatus: varchar('availability_status', { 
-    enum: ['available', 'busy', 'unavailable'] 
+    enum: ['available', 'open_to_offers', 'not_available'] 
   }).default('available'),
   availabilityUpdatedAt: timestamp('availability_updated_at').defaultNow(),
   

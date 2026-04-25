@@ -4,7 +4,7 @@ import { env } from './config/env';
 
 const startServer = async () => {
   try {
-    // Connect to MongoDB Atlas
+    // Connect to Neon PostgreSQL (Cold-start aware)
     await connectDB();
     keepAlive();
 

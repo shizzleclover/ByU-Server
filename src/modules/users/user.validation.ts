@@ -70,9 +70,9 @@ export const updateProfileSchema = z.object({
 // ─── Update availability ───
 export const updateAvailabilitySchema = z.object({
   body: z.object({
-    status: z.enum(['available', 'busy', 'unavailable'], {
+    status: z.enum(['available', 'open_to_offers', 'not_available'], {
       required_error: 'Availability status is required',
-      invalid_type_error: 'Status must be one of: available, busy, unavailable',
+      invalid_type_error: 'Status must be one of: available, open_to_offers, not_available',
     }),
   }),
 });
@@ -83,7 +83,7 @@ export const listUsersSchema = z.object({
     search: z.string().optional(),
     role: z.string().optional(),
     skill: z.string().optional(),
-    availability: z.enum(['available', 'busy', 'unavailable']).optional(),
+    availability: z.enum(['available', 'open_to_offers', 'not_available']).optional(),
     page: z.string().regex(/^\d+$/).transform(Number).optional(),
     limit: z.string().regex(/^\d+$/).transform(Number).optional(),
     sort: z.enum(['recent', 'name']).optional(),
